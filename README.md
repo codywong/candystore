@@ -1,4 +1,4 @@
-CSC309-A2
+candystore
 =========
 
-CSC309 - A2
+candystore
