@@ -162,7 +162,17 @@ class CandyStore extends CI_Controller {
 	function cart(){
 		$this->load->view('checkout/viewCart.php');
 	}
+
+	function addOneToCart($id){
+		$this->updateQuantity($id, 1);
+	}
       
+    function updateQuantity($id, $qty) { 
+    	// if 
+
+
+    	redirect('candystore/index', 'refresh');
+    }
    
     
     

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title><?php echo $title; ?></title>
+  <title><?php echo "CandyStore"; ?></title>
   <link rel="stylesheet" href="<?=  base_url(); ?>css/template.css">
 </head>
 <body>
