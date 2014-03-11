@@ -1,6 +1,7 @@
 <h2>Product Table</h2>
 <?php 
 		echo "<p>" . anchor('candystore/newForm','Add New') . "</p>";
+ 	  	echo "<p>" . anchor('candystore/newCustomer','Register') . "</p>";
  	  
 		echo "<table>";
 		echo "<tr><th>Name</th><th>Description</th><th>Price</th><th>Photo</th></tr>";

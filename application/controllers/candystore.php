@@ -32,6 +32,11 @@ class CandyStore extends CI_Controller {
 	    	$this->load->view('template', $data);
     }
     
+    function newCustomer() {
+    		$data['main']='customer/newCustomer.php';
+	    	$this->load->view('template', $data);
+    }
+
 	function create() {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
@@ -65,6 +70,35 @@ class CandyStore extends CI_Controller {
 			}
 			
 
+			$this->load->view('template', $data);
+		}	
+	}
+	
+	function createCustomer() {
+		$this->load->library('form_validation');
+		/*$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
+		$this->form_validation->set_rules('description','Description','required');
+		$this->form_validation->set_rules('price','Price','required');
+		
+		$fileUploadSuccess = $this->upload->do_upload();*/
+		
+		if ($this->form_validation->run() == true ) {
+			$this->load->model('customer_model');
+
+			$customer = new customer();
+			$customer->first = $this->input->get_post('first');
+			$customer->last = $this->input->get_post('last');
+			$customer->login = $this->input->get_post('login');
+			$customer->password = $this->password->get_post('password');
+			$customer->email = $this->input->get_post('email');
+			
+			$this->customer_model->insert($customer);
+
+			//Then we redirect to the index page again
+			redirect('candystore/index', 'refresh');
+		}
+		else {
+			$data['main']='customer/newCustomer.php';
 			$this->load->view('template', $data);
 		}	
 	}
