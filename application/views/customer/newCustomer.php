@@ -8,7 +8,7 @@
 <?php 
 	echo "<p>" . anchor('candystore/index','Back') . "</p>";
 	
-	echo form_open_multipart('candystore/create');
+	echo form_open_multipart('candystore/createCustomer');
 		
 	echo form_label('First Name'); 
 	echo form_error('first');

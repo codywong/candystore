@@ -75,21 +75,21 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function createCustomer() {
-		$this->load->library('form_validation');
-		/*$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
+		/*$this->load->library('form_validation');
+		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
 		$this->form_validation->set_rules('description','Description','required');
 		$this->form_validation->set_rules('price','Price','required');
 		
 		$fileUploadSuccess = $this->upload->do_upload();*/
 		
-		if ($this->form_validation->run() == true ) {
+		if (true ) {
 			$this->load->model('customer_model');
 
-			$customer = new customer();
+			$customer = new Customer();
 			$customer->first = $this->input->get_post('first');
 			$customer->last = $this->input->get_post('last');
 			$customer->login = $this->input->get_post('login');
-			$customer->password = $this->password->get_post('password');
+			$customer->password = $this->input->get_post('password');
 			$customer->email = $this->input->get_post('email');
 			
 			$this->customer_model->insert($customer);
