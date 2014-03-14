@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 class CandyStore extends CI_Controller {
    
      
@@ -20,6 +20,12 @@ class CandyStore extends CI_Controller {
     }
 
     function index() {
+    		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+			{
+    			$this->load->view('login.php');
+    			return;
+    		}
+
     		$this->load->model('product_model');
     		$products = $this->product_model->getAll();
     		$data['products']=$products;
@@ -28,16 +34,32 @@ class CandyStore extends CI_Controller {
     }
     
     function newForm() {
+    	    if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+			{
+    			$this->load->view('login.php');
+    			return;
+    		}
     		$data['main']='product/newForm.php';
 	    	$this->load->view('template', $data);
     }
     
     function newCustomer() {
+    		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+			{
+    			$this->load->view('login.php');
+    			return;
+    		}
     		$data['main']='customer/newCustomer.php';
 	    	$this->load->view('template', $data);
     }
 
 	function create() {
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
+
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
 		$this->form_validation->set_rules('description','Description','required');
@@ -75,6 +97,11 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function createCustomer() {
+			if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+			{
+    			$this->load->view('login.php');
+    			return;
+    		}
 		/*$this->load->library('form_validation');
 		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
 		$this->form_validation->set_rules('description','Description','required');
@@ -104,6 +131,11 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function read($id) {
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
 		$data['product']=$product;
@@ -112,6 +144,11 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function editForm($id) {
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
 		$data['product']=$product;
@@ -120,6 +157,11 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function update($id) {
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name','Name','required');
 		$this->form_validation->set_rules('description','Description','required');
@@ -150,6 +192,12 @@ class CandyStore extends CI_Controller {
 	}
     	
 	function delete($id) {
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
+
 		$this->load->model('product_model');
 		
 		if (isset($id)) 
@@ -160,22 +208,54 @@ class CandyStore extends CI_Controller {
 	}
 
 	function cart(){
-		$this->load->view('checkout/viewCart.php');
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
+		$data['main']='checkout/viewCart.php';
+		$this->load->view('template', $data);
 	}
 
-	function addOneToCart($id){
-		$this->updateQuantity($id, 1);
+	function logout() {
+		session_unset();
+		session_destroy();
+		$this->login();
 	}
-      
-    function updateQuantity($id, $qty) { 
-    	// if 
+    
+	function login() {
+		$_SESSION['loggedInAs'] = "";
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('login','Login','required');
+		$this->form_validation->set_rules('password','Password','required');
+
+		
+		if ($this->form_validation->run() == true) {
+
+			$customer = new Customer;
+			$customer->login = htmlspecialchars($this->input->get_post('login'));
+			$customer->password = htmlspecialchars($this->input->get_post('password'));
 
 
-    	redirect('candystore/index', 'refresh');
-    }
-   
-    
-    
-    
+			$this->load->model('customer_model');
+			$authenticated = $this->customer_model->checkCredentials($customer);
+			if ($customer->login == 'admin' && $customer->password == 'admin') {
+				$_SESSION['loggedInAs'] = "admin";
+				$this->index();
+			}
+			elseif ($authenticated->num_rows() > 0) {
+				$_SESSION['loggedInAs'] = "customer";
+				$this->index();
+			} else {
+				redirect('candystore/login', 'refresh');	
+			}
+
+			
+		}
+		else {
+			$this->load->view('login.php');
+		}	
+	}
 }
 

@@ -32,6 +32,15 @@ class Customer_model extends CI_Model {
 				                                  'description' => $customer->description,
 											      'price' => $customer->price));
 	}
+
+	function checkCredentials($customer) {
+		$query = $this->db->get_where('customer', 
+										array('login'=>$customer->login, 
+											'password'=>$customer->password));
+		return $query;
+ 
+
+	}
 	
 	
 }
