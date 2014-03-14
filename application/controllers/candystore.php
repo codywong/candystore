@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 class CandyStore extends CI_Controller {
    
@@ -109,7 +110,7 @@ class CandyStore extends CI_Controller {
 		
 		$fileUploadSuccess = $this->upload->do_upload();*/
 		
-		if (true ) {
+		if (true) {
 			$this->load->model('customer_model');
 
 			$customer = new Customer();
@@ -207,17 +208,8 @@ class CandyStore extends CI_Controller {
 		redirect('candystore/index', 'refresh');
 	}
 
-	function cart(){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
-		{
-			$this->load->view('login.php');
-			return;
-		}
-		$data['main']='checkout/viewCart.php';
-		$this->load->view('template', $data);
-	}
-
 	function logout() {
+		// clear session and redirect to login page
 		session_unset();
 		session_destroy();
 		$this->login();
@@ -237,13 +229,16 @@ class CandyStore extends CI_Controller {
 			$customer->login = htmlspecialchars($this->input->get_post('login'));
 			$customer->password = htmlspecialchars($this->input->get_post('password'));
 
-
+			// check database for valid login info
 			$this->load->model('customer_model');
 			$authenticated = $this->customer_model->checkCredentials($customer);
+
+			// if user and pass are admin, log in as admin
 			if ($customer->login == 'admin' && $customer->password == 'admin') {
 				$_SESSION['loggedInAs'] = "admin";
 				$this->index();
 			}
+			// if valid credentials, log in as customer
 			elseif ($authenticated->num_rows() > 0) {
 				$_SESSION['loggedInAs'] = "customer";
 				$this->index();
@@ -257,5 +252,64 @@ class CandyStore extends CI_Controller {
 			$this->load->view('login.php');
 		}	
 	}
+
+
+	function cart(){
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
+		$data['main']='checkout/viewCart.php';
+		$this->load->view('template', $data);
+	}
+
+	function addToCart($id){
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			$this->load->view('login.php');
+			return;
+		}
+
+		// cart is empty, add the item with quantity one
+		if (!isset($_SESSION['cart'])) {
+			$item = new Order_item;
+			$item->product_id = $id;
+			$item->quantity = 1;
+			
+			$_SESSION['cart'] = serialize(array($item));
+
+		} 
+		// items are already in the cart
+		else {
+			// check the cart for an already existing version of item
+			$existing = false;
+			$items = unserialize($_SESSION['cart']);
+			foreach ($items as $item) {
+
+				if ($item->product_id == $id) {
+
+					$item->quantity++;
+					$existing = true;
+				}
+			}
+			// item is not found in the cart - add it
+			if (!$existing) {
+				$item = new Order_item;
+				$item->product_id = $id;
+				$item->quantity = 1;
+
+				$items[] = $item;
+			}
+
+			// re-store updated values
+			$_SESSION['cart'] = serialize($items);
+		}
+
+		// re-direct to the cart
+		$data['main']='checkout/viewCart.php';
+		$this->load->view('template', $data);
+	}
+
 }
 
