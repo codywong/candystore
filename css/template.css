@@ -23,6 +23,10 @@
  	color: blue;
  }
 
+.cartButton{
+ 	display: inline;
+}
+
  #header{
     font-size:12px;
 	width: 768px;

@@ -16,7 +16,7 @@
 			echo "<td>" . anchor("candystore/delete/$product->id",'Delete',"onClick='return confirm(\"Do you really want to delete this record?\");'") . "</td>";
 			echo "<td>" . anchor("candystore/editForm/$product->id",'Edit') . "</td>";
 			echo "<td>" . anchor("candystore/read/$product->id",'View') . "</td>";
-			echo "<td>" . anchor("candystore/addToCart/$product->id",'Add to Cart') . "</td>";
+			echo "<td>" . anchor("candystore/addOneToCart/$product->id",'Add to Cart') . "</td>";
 				
 			echo "</tr>";
 		}

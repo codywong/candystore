@@ -23,7 +23,7 @@ class CandyStore extends CI_Controller {
     function index() {
     		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 			{
-    			$this->load->view('login.php');
+    			redirect('candystore/login', 'refresh');
     			return;
     		}
 
@@ -37,7 +37,7 @@ class CandyStore extends CI_Controller {
     function newForm() {
     	    if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 			{
-    			$this->load->view('login.php');
+    			redirect('candystore/login', 'refresh');
     			return;
     		}
     		$data['main']='product/newForm.php';
@@ -47,7 +47,7 @@ class CandyStore extends CI_Controller {
     function newCustomer() {
     		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 			{
-    			$this->load->view('login.php');
+    			redirect('candystore/login', 'refresh');
     			return;
     		}
     		$data['main']='customer/newCustomer.php';
@@ -57,7 +57,7 @@ class CandyStore extends CI_Controller {
 	function create() {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 
@@ -100,7 +100,7 @@ class CandyStore extends CI_Controller {
 	function createCustomer() {
 			if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 			{
-    			$this->load->view('login.php');
+    			redirect('candystore/login', 'refresh');
     			return;
     		}
 		/*$this->load->library('form_validation');
@@ -134,7 +134,7 @@ class CandyStore extends CI_Controller {
 	function read($id) {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 		$this->load->model('product_model');
@@ -147,7 +147,7 @@ class CandyStore extends CI_Controller {
 	function editForm($id) {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 		$this->load->model('product_model');
@@ -160,7 +160,7 @@ class CandyStore extends CI_Controller {
 	function update($id) {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 		$this->load->library('form_validation');
@@ -195,7 +195,7 @@ class CandyStore extends CI_Controller {
 	function delete($id) {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 
@@ -212,7 +212,7 @@ class CandyStore extends CI_Controller {
 		// clear session and redirect to login page
 		session_unset();
 		session_destroy();
-		$this->login();
+		redirect('candystore/login', 'refresh');
 	}
     
 	function login() {
@@ -236,14 +236,16 @@ class CandyStore extends CI_Controller {
 			// if user and pass are admin, log in as admin
 			if ($customer->login == 'admin' && $customer->password == 'admin') {
 				$_SESSION['loggedInAs'] = "admin";
-				$this->index();
+				redirect('candystore/index', 'refresh');
 			}
 			// if valid credentials, log in as customer
 			elseif ($authenticated->num_rows() > 0) {
 				$_SESSION['loggedInAs'] = "customer";
-				$this->index();
-			} else {
-				redirect('candystore/login', 'refresh');	
+				redirect('candystore/index', 'refresh');
+			}
+			// invalid credentials, go back to login
+			else {
+				$this->load->view('login.php');	
 			}
 
 			
@@ -257,17 +259,38 @@ class CandyStore extends CI_Controller {
 	function cart(){
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
+
+		$products = array();
+		$items = array();
+
+		if (isset($_SESSION['cart'])) {
+			$items = unserialize($_SESSION['cart']);
+			
+			$this->load->model('product_model');
+
+
+			foreach ($items as $item) {
+				$product = $this->product_model->get($item->product_id);
+				$products[] = $product;
+			}
+		}
+
+
+		$data['items'] = $items;
+		$data['products'] = $products;
+
 		$data['main']='checkout/viewCart.php';
 		$this->load->view('template', $data);
 	}
 
-	function addToCart($id){
+	// adds one instance of the item into the cart
+	function addOneToCart($id){
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			$this->load->view('login.php');
+			redirect('candystore/login', 'refresh');
 			return;
 		}
 
@@ -307,8 +330,38 @@ class CandyStore extends CI_Controller {
 		}
 
 		// re-direct to the cart
-		$data['main']='checkout/viewCart.php';
-		$this->load->view('template', $data);
+		$this->cart();
+	}
+
+	function removeOneFromCart($id){
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		{
+			redirect('candystore/login', 'refresh');
+			return;
+		}
+
+		// find the item to be decremented
+		$items = unserialize($_SESSION['cart']);
+		for ($index = 0; $index<count($items); $index++) {
+			if ($items[$index]->product_id == $id) {
+				$items[$index]->quantity--;
+				break;
+			}
+		}
+
+		// if quantity of an item is <= 0, remove it from the cart
+		if ($items[$index]->quantity <= 0) {
+			unset($items[$index]);
+			// reindex the array
+			$items = array_values($items);
+
+		}
+		
+		// re-store updated values
+		$_SESSION['cart'] = serialize($items);
+
+		// re-direct to the cart
+		$this->cart();
 	}
 
 }
