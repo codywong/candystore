@@ -23,6 +23,18 @@
  	color: blue;
  }
 
+td
+{
+	text-align:left;
+
+}
+
+td.money
+{
+	text-align:right;
+
+}
+
 .cartButton{
  	display: inline;
 }
@@ -57,7 +69,7 @@
  
  #main{
 	margin-left:160px;
-    width:540px;
+    width:1024px;
     height:800px;
 	background: white;
  }

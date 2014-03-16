@@ -1,3 +1,8 @@
+<head>
+  <meta charset="utf-8" />
+  <title><?php echo "CandyStore"; ?></title>
+</head>
+
 <h2>A Candy Store </h2>
 
 <style>
@@ -6,6 +11,11 @@
 </style>
 
 <?php 
+	// var_dump($errorMsg);
+	if ($errorMsg) {
+		echo "<p>" . $errorMsg . "</p>";
+	}
+	
 	echo form_open_multipart('candystore/login');
 		
 	echo form_label('Login'); 

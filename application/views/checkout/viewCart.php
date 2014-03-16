@@ -10,7 +10,7 @@
 	}
 
 	echo "<table>";
-	echo "<tr><th>Quantity</th><th>Name</th><th>Description</th><th>Price</th><th>Photo</th></tr>";
+	echo "<tr><th>Quantity</th><th>Name</th><th>Description</th><th>Price</th><th>Photo</th><th></th></tr>";
 	
 	for ($i = 0; $i<count($items); ++$i) {
 		$product = $products[$i];
@@ -34,10 +34,14 @@
 
 		echo "<td>" . $product->name . "</td>";
 		echo "<td>" . $product->description . "</td>";
-		echo "<td>" . $product->price . "</td>";
+		echo "<td class='money'>" . number_format((float)$product->price, 2, '.', '') . "</td>";
 		echo "<td><img src='" . base_url() . "images/product/" . $product->photo_url . "' width='100px' /></td>";
+		echo "<td>" . anchor("candystore/removeFromCart/$product->id",'Remove from Cart') . "</td>";
 			
 		echo "</tr>";
 	}
 	echo "<table>";
+
+	echo "<p> Total:  $" . number_format((float)$total, 2, '.', '') . "</p>";
+	echo "<p>" . anchor("candystore/checkout",'Checkout') . "</p>";
 ?>
