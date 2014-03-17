@@ -3,10 +3,11 @@ candystore
 
 Members: 
 Cody Wong		998217503		g2areo
-Amelia Gao 		
+Amelia Gao 	1001041810	
 
 
 A basic website for a candy store with two types of users:
+*note: designed as a private candy store - only admin can create new users
 
 Admin:  (user: admin           pass: admin)
 - can create new users
