@@ -515,10 +515,13 @@ class CandyStore extends CI_Controller {
 
 			// send mail
 			$config['mailtype'] = 'html';
+
+			/*
+			// not including SMTP server info as requested in assignment description
 			$config['smtp_host'] = 'smtp.gmail.com';
 			$config['smtp_user'] = 'candystoremailer@gmail.com';
 			$config['smtp_pass'] = 'candystoremailer1';
-			$config['smtp_port'] = '465';
+			$config['smtp_port'] = '465';*/
 	
 			$this->email->initialize($config);
 			$this->email->from('candystoremailer@gmail.com', 'Best Candy Store');

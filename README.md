@@ -23,4 +23,6 @@ Customer
 - reciept is auto-emailed to the customer's registration email. If no email is provided
 	an error message is given to notify an admin (to which someone will have to manually
 	edit the database)
+	-> SMTP server is commented out as per assignment description. to enable, uncomment block in payForm 
+		function in candystore controller.
 - view and print reciept
