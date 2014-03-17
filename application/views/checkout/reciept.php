@@ -2,7 +2,7 @@
 
 <?php 
 	echo "<p>" . anchor('candystore/index','Back') . "</p>";
-	echo "<p> Thank you for shopping at the Candy store </p>";
+	echo "<p> Thank you for shopping at the Candy store, a copy of your reciept has been emailed to you </p>";
 
 
 ?>	

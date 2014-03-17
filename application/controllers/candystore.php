@@ -29,35 +29,38 @@ class CandyStore extends CI_Controller {
 
     		$this->load->model('product_model');
     		$products = $this->product_model->getAll();
+    		$data['loggedInAs'] = $_SESSION['loggedInAs'];
     		$data['products']=$products;
     		$data['main']='product/list.php';
     		$this->load->view('template',$data);
     }
     
     function newForm() {
-    	    if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+    	    if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 			{
-    			redirect('candystore/login', 'refresh');
+    			$this->index();
     			return;
     		}
     		$data['main']='product/newForm.php';
+    		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 	    	$this->load->view('template', $data);
     }
     
     function newCustomer() {
-    		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+    		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 			{
-    			redirect('candystore/login', 'refresh');
+    			$this->index();
     			return;
     		}
     		$data['main']='customer/newCustomer.php';
+    		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 	    	$this->load->view('template', $data);
     }
 
 	function create() {
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -86,6 +89,7 @@ class CandyStore extends CI_Controller {
 		}
 		else {
 			$data['main']='product/newForm.php';
+			$data['loggedInAs'] = $_SESSION['loggedInAs'];
 			if ( !$fileUploadSuccess) {
 				$data['fileerror'] = $this->upload->display_errors();
 				$this->load->view('template',$data);
@@ -98,35 +102,38 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function createCustomer() {
-			if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
-			{
-    			redirect('candystore/login', 'refresh');
-    			return;
-    		}
-		/*$this->load->library('form_validation');
-		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
-		$this->form_validation->set_rules('description','Description','required');
-		$this->form_validation->set_rules('price','Price','required');
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
+		{
+			$this->index();
+			return;
+		}
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('first','First Name','required');
+		$this->form_validation->set_rules('last','Last Name','required');
+		$this->form_validation->set_rules('login','User Name','required|is_unique[customer.login]');
+		$this->form_validation->set_rules('password','Password','required|min_length[6]');
+		$this->form_validation->set_rules('email','Email','required|valid_email');
 		
-		$fileUploadSuccess = $this->upload->do_upload();*/
 		
-		if (true) {
+		
+		if ($this->form_validation->run() == true) {
 			$this->load->model('customer_model');
 
 			$customer = new Customer();
-			$customer->first = $this->input->get_post('first');
-			$customer->last = $this->input->get_post('last');
-			$customer->login = $this->input->get_post('login');
-			$customer->password = $this->input->get_post('password');
-			$customer->email = $this->input->get_post('email');
-			
+			$customer->first = htmlspecialchars($this->input->get_post('first'));
+			$customer->last = htmlspecialchars($this->input->get_post('last'));
+			$customer->login = htmlspecialchars($this->input->get_post('login'));
+			$customer->password = htmlspecialchars($this->input->get_post('password'));
+			$customer->email = htmlspecialchars($this->input->get_post('email'));
+
 			$this->customer_model->insert($customer);
 
-			//Then we redirect to the index page again
 			redirect('candystore/index', 'refresh');
 		}
 		else {
 			$data['main']='customer/newCustomer.php';
+			$data['loggedInAs'] = $_SESSION['loggedInAs'];
 			$this->load->view('template', $data);
 		}	
 	}
@@ -134,33 +141,35 @@ class CandyStore extends CI_Controller {
 	function read($id) {
 		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
 		$data['product']=$product;
 		$data['main']='product/read.php';
+		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 		$this->load->view('template',$data);
 	}
 	
 	function editForm($id) {
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 		$this->load->model('product_model');
 		$product = $this->product_model->get($id);
 		$data['product']=$product;
 		$data['main']='product/editForm.php';
+		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 		$this->load->view('template',$data);
 	}
 	
 	function update($id) {
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 		$this->load->library('form_validation');
@@ -188,14 +197,15 @@ class CandyStore extends CI_Controller {
 			$product->price = set_value('price');
 			$data['product']=$product;
 			$data['main']='product/editForm.php';
+			$data['loggedInAs'] = $_SESSION['loggedInAs'];
 			$this->load->view('template',$data);
 		}
 	}
     	
 	function delete($id) {
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -259,9 +269,9 @@ class CandyStore extends CI_Controller {
 
 
 	function cart(){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -288,14 +298,15 @@ class CandyStore extends CI_Controller {
 		$_SESSION['total'] = $total;
 
 		$data['main']='checkout/viewCart.php';
+		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 		$this->load->view('template', $data);
 	}
 
 	// adds one instance of the item into the cart
 	function addOneToCart($id){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -339,9 +350,9 @@ class CandyStore extends CI_Controller {
 	}
 
 	function removeOneFromCart($id){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -370,9 +381,9 @@ class CandyStore extends CI_Controller {
 	}
 
 	function removeFromCart($id){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -396,9 +407,9 @@ class CandyStore extends CI_Controller {
 	}
 
 	function checkout(){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -407,14 +418,16 @@ class CandyStore extends CI_Controller {
 			return;
 		}
 
+		$data['errorMsg'] = "";
 		$data['main']='checkout/paymentInfo.php';
+		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 		$this->load->view('template',$data);
 	}
 
 	function payForm(){
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] == "") 
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "customer") 
 		{
-			redirect('candystore/login', 'refresh');
+			$this->index();
 			return;
 		}
 
@@ -423,11 +436,12 @@ class CandyStore extends CI_Controller {
 			$this->cart();
 			return;
 		}
+		$data['errorMsg'] = "";
 
 		$this->load->library('form_validation');
-		$this->form_validation->set_rules('creditcard_number','Credit Card Number','required');
-		$this->form_validation->set_rules('creditcard_month','Expiry Month (MM)','required');
-		$this->form_validation->set_rules('creditcard_year','Expiry Year (YY)','required');
+		$this->form_validation->set_rules('creditcard_number','Credit Card Number','required|numeric|min_length[16]|max_length[16]');
+		$this->form_validation->set_rules('creditcard_month','Expiry Month (MM)','required|numeric|less_than[13]|greater_than[0]');
+		$this->form_validation->set_rules('creditcard_year','Expiry Year (YY)','required|numeric|less_than[32]|greater_than[0]');
 
 		if ($this->form_validation->run() == true) {
 			$this->load->model('order_model');
@@ -437,12 +451,34 @@ class CandyStore extends CI_Controller {
 			// create the order
 			$order = new Order();
 			$order->customer_id = $_SESSION['customerID'];
-			$order->order_date = date("Y-m-d", time());		// dd-mm-yy
-			$order->order_time = date("G:i:s", time());		// 24hour: hh:mm:ss
+			$order->order_date = date("Y-m-d", time());
+			$order->order_time = date("G:i:s", time());
 			$order->total = $_SESSION['total'];
 			$order->creditcard_number = htmlspecialchars($this->input->get_post('creditcard_number')); 
 			$order->creditcard_month = htmlspecialchars($this->input->get_post('creditcard_month'));
 			$order->creditcard_year = htmlspecialchars($this->input->get_post('creditcard_year'));
+
+			// if card is expired, raise error and return
+			if (($order->creditcard_year == date("y", time()) && $order->creditcard_month < date("m", time())) 
+				|| $order->creditcard_year < date("y", time())) {
+				$data['errorMsg'] = "Your credit card is expired!";
+				$data['main']='checkout/paymentInfo.php';
+				$data['loggedInAs'] = $_SESSION['loggedInAs'];
+				$this->load->view('template',$data);
+				return;
+			}
+
+			//get customer info
+			$this->load->model('customer_model');
+			$customer = $this->customer_model->get($order->customer_id);
+			if (!$customer->email) {
+				$data['errorMsg'] = "Your account doesn't have an email address!";
+				$data['main']='checkout/paymentInfo.php';
+				$data['loggedInAs'] = $_SESSION['loggedInAs'];
+				$this->load->view('template',$data);
+				return;
+			}
+
 
 			// add order to database
 			$order_id = $this->order_model->insert($order);
@@ -475,9 +511,7 @@ class CandyStore extends CI_Controller {
 			$data['order_id'] = $order_id;
 			$data['total'] = $order->total;
 
-			//get email address
-			$this->load->model('customer_model');
-			$customer = $this->customer_model->get($order->customer_id);
+			
 
 			// send mail
 			$config['mailtype'] = 'html';
@@ -496,12 +530,58 @@ class CandyStore extends CI_Controller {
 
 
 			$data['main']='checkout/reciept.php';
+			$data['loggedInAs'] = $_SESSION['loggedInAs'];
 			$this->load->view('template', $data);
 
 		}
 		else {
-			redirect('candystore/payForm', 'refresh');
+			$data['main']='checkout/paymentInfo.php';
+			$data['loggedInAs'] = $_SESSION['loggedInAs'];
+			$this->load->view('template',$data);
 		}	
+	}
+
+	function viewOrders(){
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
+		{
+			$this->index();
+			return;
+		}
+		$this->load->model('order_model');
+		$orders = $this->order_model->getAll();
+		$data['loggedInAs'] = $_SESSION['loggedInAs'];
+		$data['orders']=$orders;
+		$data['main']='orders.php';
+		$this->load->view('template',$data);
+	}
+
+	function deleteAll(){
+		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
+		{
+			$this->index();
+			return;
+		}
+		$this->load->model('order_model');
+		$this->load->model('order_item_model');
+		$this->load->model('customer_model');
+
+		// get all items needed to be deleted
+		$orders = $this->order_model->getAll();
+		$order_items = $this->order_item_model->getAll();
+		$customers = $this->customer_model->getAll();
+
+		foreach ($orders as $order) {
+			$this->order_model->delete($order->id);
+		}
+		foreach ($order_items as $order_item) {
+			$this->order_item_model->delete($order_item->id);
+		}
+		foreach ($customers as $customer) {
+			$this->customer_model->delete($customer->id);
+		}
+
+		redirect('candystore/index', 'refresh');
+
 	}
 
 }

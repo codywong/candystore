@@ -8,6 +8,10 @@
 <?php 
 	echo "<p>" . anchor('candystore/cart','Back') . "</p>";
 	
+	if ($errorMsg) {
+		echo "<p>" . $errorMsg . "</p>";
+	}
+
 	echo form_open("candystore/payForm");
 	
 	echo form_label('Credit Card Number'); 

@@ -11,7 +11,6 @@
 </style>
 
 <?php 
-	// var_dump($errorMsg);
 	if ($errorMsg) {
 		echo "<p>" . $errorMsg . "</p>";
 	}

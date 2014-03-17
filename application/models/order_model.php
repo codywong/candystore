@@ -20,10 +20,6 @@ class Order_model extends CI_Model {
 	
 	// returns id of order inserted
 	function insert($order) {
-		// $query = $this->db->query('INSERT INTO `order` (`customer_id`, `order_date`, `order_time`, `total`, `creditcard_number`, `creditcard_month`, `creditcard_year`) 
-		// 							VALUES (1, CURRENT_DATE(), CURRENT_TIME(), 10, '1', 1, 1);');
-
-
 		$this->db->insert("order", array('customer_id' => $order->customer_id,
 													'order_date' =>$order->order_date,
 													'order_time' => $order->order_time,
