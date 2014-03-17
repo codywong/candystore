@@ -467,13 +467,33 @@ class CandyStore extends CI_Controller {
 			}
 
 			// empty/clear the cart 
-/////////////////////////////////////////////////////////////////////unset($_SESSION['cart']);
+			unset($_SESSION['cart']);
 
 			$data['quantity'] = $quantity;
 			$data['name'] = $name;
 			$data['price'] = $price;
 			$data['order_id'] = $order_id;
 			$data['total'] = $order->total;
+
+			//get email address
+			$this->load->model('customer_model');
+			$customer = $this->customer_model->get($order->customer_id);
+
+			// send mail
+			$config['mailtype'] = 'html';
+			$config['smtp_host'] = 'smtp.gmail.com';
+			$config['smtp_user'] = 'candystoremailer@gmail.com';
+			$config['smtp_pass'] = 'candystoremailer1';
+			$config['smtp_port'] = '465';
+	
+			$this->email->initialize($config);
+			$this->email->from('candystoremailer@gmail.com', 'Best Candy Store');
+			$this->email->to($customer->email); 
+			$this->email->subject('Your Candystore Reciept');
+			$message = $this->load->view('checkout/emailReciept.php', $data, TRUE);
+			$this->email->message($message);
+			$this->email->send();
+
 
 			$data['main']='checkout/reciept.php';
 			$this->load->view('template', $data);

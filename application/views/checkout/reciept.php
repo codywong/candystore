@@ -41,7 +41,7 @@
 	buf+='Order Id: ' + order_id + '<br>';
 	buf+='Total: ' + parseFloat(total).toFixed(2) + '<br>';
 
-	buf+='<tr><th>Quantity</th><th>Name</th><th>Price (ea)</th><th>Item Subtotal</th>  </tr>';
+	buf+='<tr><th>Quantity</th><th>Name</th><th>Price (ea)</th><th>Item Subtotal</th></tr>';
 
 	for (i = 0; i<quantity.length; i++) {
 		buf+= '<tr><td>'+quantity[i]+'</td><td>'+name[i]+"</td><td style='text-align:right;'>"+parseFloat(price[i]).toFixed(2)+'</td>';
