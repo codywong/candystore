@@ -3,7 +3,7 @@
   <title><?php echo "CandyStore"; ?></title>
 </head>
 
-<h2>A Candy Store </h2>
+<h2>Best Candy Store </h2>
 
 <style>
 	input { display: block;}
@@ -27,4 +27,5 @@
 	
 	echo form_submit('submit', 'Login');
 	echo form_close();
+	echo "<p>" . anchor('candystore/newCustomer','Register') . "</p>";
 ?>	

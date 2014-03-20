@@ -47,11 +47,6 @@ class CandyStore extends CI_Controller {
     }
     
     function newCustomer() {
-    		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
-			{
-    			$this->index();
-    			return;
-    		}
     		$data['main']='customer/newCustomer.php';
     		$data['loggedInAs'] = $_SESSION['loggedInAs'];
 	    	$this->load->view('template', $data);
@@ -102,11 +97,6 @@ class CandyStore extends CI_Controller {
 	}
 	
 	function createCustomer() {
-		if (!isset($_SESSION['loggedInAs']) || $_SESSION['loggedInAs'] != "admin") 
-		{
-			$this->index();
-			return;
-		}
 
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('first','First Name','required');
@@ -441,7 +431,7 @@ class CandyStore extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('creditcard_number','Credit Card Number','required|numeric|min_length[16]|max_length[16]');
 		$this->form_validation->set_rules('creditcard_month','Expiry Month (MM)','required|numeric|less_than[13]|greater_than[0]');
-		$this->form_validation->set_rules('creditcard_year','Expiry Year (YY)','required|numeric|less_than[32]|greater_than[0]');
+		$this->form_validation->set_rules('creditcard_year','Expiry Year (YY)','required|numeric|greater_than[0]');
 
 		if ($this->form_validation->run() == true) {
 			$this->load->model('order_model');
@@ -517,13 +507,13 @@ class CandyStore extends CI_Controller {
 			$config['mailtype'] = 'html';
 
 			
-			// not including SMTP server info as requested in assignment description
-			/*
+/*			// not including SMTP server info as requested in assignment description
+			
 			$config['smtp_host'] = 'smtp.gmail.com';
 			$config['smtp_user'] = 'candystoremailer@gmail.com';
 			$config['smtp_pass'] = 'candystoremailer1';
-			$config['smtp_port'] = '465';*/
-	
+			$config['smtp_port'] = '465';
+*/	
 			$this->email->initialize($config);
 			$this->email->from('candystoremailer@gmail.com', 'Best Candy Store');
 			$this->email->to($customer->email); 

@@ -1,15 +1,14 @@
 candystore
 =========
 ***SMTP server information is commented out. please provide config information
-***or uncomment lines 521-524
+***or uncomment lines 512-515 in application/contollers/candystore.php
 
 Members: 
 Cody Wong		998217503	g2areo
 Qiannan Gao	 	1001041810	c4gaoqia
 
 
-A basic website for a private candy store with two types of users:
-*note: designed as a private candy store - only admin can create new users
+A basic website for a candy store with two types of users:
 
 Admin:  (user: admin           pass: admin)
 - can create new users
@@ -19,7 +18,8 @@ Admin:  (user: admin           pass: admin)
 - shopping/adding things to cart is restricted to customer accounts
 
 
-Customer - can only be created by admins
+Customer
+- can register self
 - add and remove items from their cart
 - checkout, and provide credit card info
 - reciept is auto-emailed to the customer's registration email. If no email is provided
