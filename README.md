@@ -4,8 +4,8 @@ candystore
 ***or uncomment lines 521-524
 
 Members: 
-Cody Wong		998217503
-Amelia g2areo 	1001041810	
+Cody Wong		998217503	g2areo
+Qiannan Gao	 	1001041810	c4gaoqia
 
 
 A basic website for a private candy store with two types of users:
