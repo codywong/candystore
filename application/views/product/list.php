@@ -1,7 +1,7 @@
 <h2>Product Table</h2>
 <?php 
-		echo "<p>" . anchor('candystore/newForm','Add New Item') . "</p>";
 		if ($loggedInAs == 'admin') {
+			echo "<p>" . anchor('candystore/newForm','Add New Item') . "</p>";
  	  		echo "<p>" . anchor('candystore/newCustomer','Register New Member') . "</p>";
  	  		echo "<p>" . anchor('candystore/viewOrders','View Past Orders') . "</p>";
  	  		echo "<p>" . anchor('candystore/deleteAll', 'Delete all customer and order information', array('onClick' => "return confirm('Are you sure you want to delete?')"))  . "</p>";

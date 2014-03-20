@@ -1,12 +1,14 @@
 candystore
 =========
+***SMTP server information is commented out. please provide config information
+***or uncomment lines 521-524
 
 Members: 
-Cody Wong		998217503		g2areo
-Amelia Gao 	1001041810	
+Cody Wong		998217503
+Amelia g2areo 	1001041810	
 
 
-A basic website for a candy store with two types of users:
+A basic website for a private candy store with two types of users:
 *note: designed as a private candy store - only admin can create new users
 
 Admin:  (user: admin           pass: admin)
@@ -17,7 +19,7 @@ Admin:  (user: admin           pass: admin)
 - shopping/adding things to cart is restricted to customer accounts
 
 
-Customer
+Customer - can only be created by admins
 - add and remove items from their cart
 - checkout, and provide credit card info
 - reciept is auto-emailed to the customer's registration email. If no email is provided

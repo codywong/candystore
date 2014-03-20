@@ -67,7 +67,7 @@ class CandyStore extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name','Name','required|is_unique[product.name]');
 		$this->form_validation->set_rules('description','Description','required');
-		$this->form_validation->set_rules('price','Price','required');
+		$this->form_validation->set_rules('price','Price','required|numeric|greater_than[0]');
 		
 		$fileUploadSuccess = $this->upload->do_upload();
 		
@@ -249,7 +249,7 @@ class CandyStore extends CI_Controller {
 				redirect('candystore/index', 'refresh');
 			}
 			// if valid credentials, log in as customer
-			elseif ($authenticated->num_rows() > 0) {
+			else if ($authenticated->num_rows() > 0) {
 				$_SESSION['loggedInAs'] = "customer";
 				$_SESSION['customerID'] = $authenticated->row()->id;
 				redirect('candystore/index', 'refresh');
@@ -516,8 +516,9 @@ class CandyStore extends CI_Controller {
 			// send mail
 			$config['mailtype'] = 'html';
 
-			/*
+			
 			// not including SMTP server info as requested in assignment description
+			/*
 			$config['smtp_host'] = 'smtp.gmail.com';
 			$config['smtp_user'] = 'candystoremailer@gmail.com';
 			$config['smtp_pass'] = 'candystoremailer1';
@@ -550,6 +551,7 @@ class CandyStore extends CI_Controller {
 			$this->index();
 			return;
 		}
+		// get all orders and pass to view
 		$this->load->model('order_model');
 		$orders = $this->order_model->getAll();
 		$data['loggedInAs'] = $_SESSION['loggedInAs'];
@@ -573,6 +575,7 @@ class CandyStore extends CI_Controller {
 		$order_items = $this->order_item_model->getAll();
 		$customers = $this->customer_model->getAll();
 
+		// delete all items
 		foreach ($orders as $order) {
 			$this->order_model->delete($order->id);
 		}
